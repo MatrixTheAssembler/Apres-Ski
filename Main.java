@@ -39,7 +39,7 @@ public class Main {
 
     private static List<String> aktionen = new ArrayList<>();
     private static List<String> pathCosts = new ArrayList<>();
-    private static double pathcost = Double.MAX_VALUE;
+    private static double pathcost = Double.POSITIVE_INFINITY;
 
     public static void main(String[] args) {
         pVormittagBesucher.put(0, 0.1);
@@ -77,11 +77,15 @@ public class Main {
                         break;
                     }
                 }
+
+                if (decision == 0) {
+                    break;
+                }
             }
 
-            if (decision == 238) {
-                break;
-            }
+            // if (decision == 238) {
+            //     break;
+            // }
         }
 
         System.out.println("#################");
@@ -132,7 +136,7 @@ public class Main {
 
     private static void calculateMinExpectedCosts(int decision, int lagerG, int lagerN, Map<Integer, Double> pB,
             double pG, double pN) {
-        double minExpectedCost = Double.MAX_VALUE;
+        double minExpectedCost = Double.POSITIVE_INFINITY;
         String minCostAktion = "";
 
         for (int aktionG = 0; aktionG <= 4; aktionG++) {

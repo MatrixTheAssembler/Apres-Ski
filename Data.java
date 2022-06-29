@@ -57,11 +57,17 @@ public class Data {
     public void print(int decision, int x){
         for(int i = 0; i < x; i++){
             for(int j = 0; j < x; j++){
-                double cost = (double) Math.round(getCost(decision, i, j) * 10) / 10;
+                String cost = String.valueOf(Double.POSITIVE_INFINITY);
+                
+                if(getCost(decision, i, j) != Double.POSITIVE_INFINITY){
+                    cost = String.valueOf((double) Math.round(getCost(decision, i, j) * 10) / 10);
+                }
                 System.out.print(cost + " ");
             }
             System.out.println();
         }
+
+        
         for(int i = 0; i < x; i++){
             for(int j = 0; j < x; j++){
                 System.out.print(getAktion(decision, i, j) + " ");
