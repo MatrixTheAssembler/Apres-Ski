@@ -93,12 +93,9 @@ for decision in range(decisions-1, -1, -1):
                             if(besucher_costs_sum < min_expected_cost):
                                 min_expected_cost = besucher_costs_sum
                                 min_cost_aktion = aktion_to_letters(aktion_g, aktion_n, aktion_x)
-                                print(min_cost_aktion)
 
                 data.set_cost(decision, lager_g, lager_n, min_expected_cost)
                 data.set_aktion(decision, lager_g, lager_n, min_cost_aktion)
-                if(len(min_cost_aktion)):
-                    print(min_cost_aktion)
             else:
                 min_expected_cost = np.inf
                 min_cost_aktion = ""
@@ -106,27 +103,22 @@ for decision in range(decisions-1, -1, -1):
                 for aktion_g in range(4+1):
                     for aktion_n in range(4-aktion_g+1):
                         for aktion_x in range(4-aktion_g-aktion_n+1):
-                            cost_aktion = "G" * aktion_g + "N" * aktion_n + "X" * aktion_x
-                            # print(cost_aktion)
-                            # besucher_costs_sum = calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_nachmittag_besucher, p_nachmittag_g, p_nachmittag_n)
-                            besucher_costs_sum = 0
+                            
+                            besucher_costs_sum = calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_nachmittag_besucher, p_nachmittag_g, p_nachmittag_n)
 
                             if besucher_costs_sum < min_expected_cost:
                                 min_expected_cost = besucher_costs_sum
-                                min_cost_aktion = cost_aktion
-                                print(cost_aktion)
+                                min_cost_aktion = aktion_to_letters(aktion_g, aktion_n, aktion_x)
 
                 data.set_cost(decision, lager_g, lager_n, min_expected_cost)
                 data.set_aktion(decision, lager_g, lager_n, min_cost_aktion)
-                if(len(min_cost_aktion)):
-                    print(min_cost_aktion)
 
     # break
-    if(decision == 238):
-        break
+    # if(decision == 238):
+    #     break
 
-        # if(decision == 0 and lager_g == 0 and lager_n == 0):
-        #     break
+        if(decision == 0 and lager_g == 0 and lager_n == 0):
+            break
 
 
 # for decision in range(decisions):
