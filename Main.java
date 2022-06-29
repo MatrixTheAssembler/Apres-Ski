@@ -38,8 +38,8 @@ public class Main {
     private static double pNachmittagN = 0.1;
 
     private static List<String> aktionen = new ArrayList<>();
-    private static List<String> pathCosts = new ArrayList<>();
-    private static double pathcost = Double.POSITIVE_INFINITY;
+    private static List<Double> pathCosts = new ArrayList<>();
+    private static double pathCost = Double.POSITIVE_INFINITY;
 
     public static void main(String[] args) {
         pVormittagBesucher.put(0, 0.1);
@@ -84,7 +84,7 @@ public class Main {
             }
 
             // if (decision == 238) {
-            //     break;
+            // break;
             // }
         }
 
@@ -97,15 +97,22 @@ public class Main {
         data.print(0, 5);
     }
 
-    // private static void findShortestPath() {
-    //     for (int decision = 0; decision < decisions; decision++) {
-    //         System.out.println("Decision: " + decision);
-    //         for (int lagerG = 0; lagerG < lagerMaxG; lagerG++) {
-    //             for (int lagerN = 0; lagerN < lagerMaxN; lagerN++) {
-    //             }
-    //         }
-    //     }
-    // }
+    private static void findShortestPath() {
+        String nextStep = data.getAktion(0, 0, 0);
+        aktionen.add(nextStep);
+        pathCost = data.getCost(0, 0, 0);
+        pathCosts.add(data.getCost(0, 0, 0));
+
+        int aktuellLagerG = 0;
+        int aktuellLagerN = 0;
+
+        int aktionG = lettersToAktion(aktionen.get(0))[0];
+        int aktionN = lettersToAktion(aktionen.get(0))[1];
+
+        for (int decision = 1; decision < decisions; decision++) {
+            System.out.println("Decision: " + decision);
+        }
+    }
 
     private static double calculateAktionCost(int decision, int lagerG, int lagerN, int aktionG, int aktionN,
             Map<Integer, Double> pB, double pG, double pN) {
@@ -163,6 +170,20 @@ public class Main {
             aktion += "N";
         }
         return aktion;
+    }
+
+    private static int[] lettersToAktion(String aktion) {
+        int aktionG = 0;
+        int aktionN = 0;
+
+        for (int i = 0; i < aktion.length(); i++) {
+            if (aktion.charAt(i) == 'G') {
+                aktionG++;
+            } else {
+                aktionN++;
+            }
+        }
+        return new int[] { aktionG, aktionN };
     }
 
     private static boolean isVormittag(int t) {
