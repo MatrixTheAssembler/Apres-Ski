@@ -1,3 +1,4 @@
+from multiprocessing import Pool, freeze_support
 from data import Data
 import numpy as np
 
@@ -39,6 +40,9 @@ path_aktionen = []
 path_costs = []
 path_cost = np.inf
 
+if __name__ == "__main__":
+    freeze_support()
+
 
 
 def isVormittag(t):
@@ -69,56 +73,46 @@ def calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_b, p
     return sum(besucher_costs)
 
 
+def calculate_min_expected_costs(decision, lager_g, lager_n, p_b, p_g, p_n):
+    min_expected_cost = np.inf
+    min_cost_aktion = ""
+
+    for aktion_g in range(4+1):
+        for aktion_n in range(4-aktion_g+1):
+            for aktion_x in range(4-aktion_g-aktion_n+1):
+
+                besucher_costs_sum = calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_b, p_g, p_n)
+
+                if(besucher_costs_sum < min_expected_cost):
+                    min_expected_cost = besucher_costs_sum
+                    min_cost_aktion = aktion_to_letters(aktion_g, aktion_n, aktion_x)
+
+    data.set_cost(decision, lager_g, lager_n, min_expected_cost)
+    data.set_aktion(decision, lager_g, lager_n, min_cost_aktion)
+
+
+
 def aktion_to_letters(aktion_g, aktion_n, aktion_x):
     return "G" * aktion_g + "N" * aktion_n + "X" * aktion_x
 
 
-
 for decision in range(decisions-1, -1, -1):
-    # print("D: " + str(decision))
+    print("D: " + str(decision))
     for lager_g in range(lager_max_g):
-        print("D: " + str(decision) + "         G: " + str(lager_g))
+        # print("D: " + str(decision) + "         G: " + str(lager_g))
         for lager_n in range(lager_max_n):
             # print("                             N: " + str(lager_n))
             if(isVormittag(decision)):
-                min_expected_cost = np.inf
-                min_cost_aktion = ""
-
-                for aktion_g in range(4+1):
-                    for aktion_n in range(4-aktion_g+1):
-                        for aktion_x in range(4-aktion_g-aktion_n+1):
-
-                            besucher_costs_sum = calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_vormittag_besucher, p_vormittag_g, p_vormittag_n)
-
-                            if(besucher_costs_sum < min_expected_cost):
-                                min_expected_cost = besucher_costs_sum
-                                min_cost_aktion = aktion_to_letters(aktion_g, aktion_n, aktion_x)
-
-                data.set_cost(decision, lager_g, lager_n, min_expected_cost)
-                data.set_aktion(decision, lager_g, lager_n, min_cost_aktion)
+                calculate_min_expected_costs(decision, lager_g, lager_n, p_vormittag_besucher, p_vormittag_g, p_vormittag_n)
             else:
-                min_expected_cost = np.inf
-                min_cost_aktion = ""
-
-                for aktion_g in range(4+1):
-                    for aktion_n in range(4-aktion_g+1):
-                        for aktion_x in range(4-aktion_g-aktion_n+1):
-                            
-                            besucher_costs_sum = calculate_aktion_cost(decision, lager_g, lager_n, aktion_g, aktion_n, p_nachmittag_besucher, p_nachmittag_g, p_nachmittag_n)
-
-                            if besucher_costs_sum < min_expected_cost:
-                                min_expected_cost = besucher_costs_sum
-                                min_cost_aktion = aktion_to_letters(aktion_g, aktion_n, aktion_x)
-
-                data.set_cost(decision, lager_g, lager_n, min_expected_cost)
-                data.set_aktion(decision, lager_g, lager_n, min_cost_aktion)
+                calculate_min_expected_costs(decision, lager_g, lager_n, p_nachmittag_besucher, p_nachmittag_g, p_nachmittag_n)
 
     # break
-    # if(decision == 238):
+    # if(decision == 239):
     #     break
 
-        if(decision == 0 and lager_g == 0 and lager_n == 0):
-            break
+            if(decision == 0 and lager_g == 0):
+                break
 
 
 # for decision in range(decisions):
@@ -138,9 +132,12 @@ for decision in range(decisions-1, -1, -1):
 
 
 
-
 data.print(239, 20)
 data.print(238, 20)
 data.print(237, 20)
 data.print(236, 20)
 data.print(235, 20)
+print("###############")
+data.print(2, 20)
+data.print(1, 20)
+data.print(0, 20)
