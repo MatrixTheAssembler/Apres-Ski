@@ -73,28 +73,30 @@ public class Main {
                                 pNachmittagN);
                     }
 
-                    if (decision == 0) {
-                        break;
-                    }
+                    // if (decision == 0) break;
+
+                    // if(lagerN == 0) break;
+                    if(lagerN == 1) break;
                 }
 
-                if (decision == 0) {
-                    break;
-                }
+                // if (decision == 0) break;
+
+                // if(lagerG == 0) break;
+                if(lagerG == 1) break;
             }
 
-            // if (decision == 238) {
-            // break;
-            // }
+            // if (decision == 238) break;
+            if (decision == 239) break;
         }
 
         System.out.println("#################");
         // findShortestPath();
 
-        data.print(239, 5);
-        data.print(238, 5);
-        data.print(1, 5);
-        data.print(0, 5);
+        data.print(240, 15);
+        data.print(239, 15);
+        data.print(238, 15);
+        data.print(1, 15);
+        data.print(0, 15);
     }
 
     private static void findShortestPath() {
@@ -116,29 +118,52 @@ public class Main {
 
     private static double calculateAktionCost(int decision, int lagerG, int lagerN, int aktionG, int aktionN,
             Map<Integer, Double> pB, double pG, double pN) {
+        if(aktionG == 0 && aktionN == 0) {
+            return 0;
+        }
+
         double einkaufCostSum = kaufCostGE * aktionG + kaufCostNE * aktionN;
+        System.out.println("KaufCostGE: " + kaufCostGE + " * AktionG: " + aktionG + " + KaufCostNE: " + kaufCostNE + " * AktionN: " + aktionN + " = EinkaufCostSum: " + einkaufCostSum);
 
         double transportCostSum = 0;
         if (aktionG + aktionN == 3 && isVormittag(decision)) {
             transportCostSum = seilbahnCostFix + aktionG * seilbahnCostE + aktionN * seilbahnCostE;
+            System.out.println("SeilbahnCostFix: " + seilbahnCostFix + " + AktionG: " + aktionG + " * SeilbahnCostE: " + seilbahnCostE + " + AktionN: " + aktionN + " * SeilbahnCostE: " + seilbahnCostE + " = TransportCostSum: " + transportCostSum);
         } else {
             transportCostSum = hubschrauberCostFix + aktionG * hubschrauberCostE + aktionN * hubschrauberCostE;
+            System.out.println("HubschrauberCostFix: " + hubschrauberCostFix + " + AktionG: " + aktionG + " * HubschrauberCostE: " + hubschrauberCostE + " + AktionN: " + aktionN + " * HubschrauberCostE: " + hubschrauberCostE + " = TransportCostSum: " + transportCostSum);
         }
 
         double fixCost = einkaufCostSum + transportCostSum;
+        System.out.println("EinkaufCostSum: " + einkaufCostSum + " + TransportCostSum: " + transportCostSum + " = FixCost: " + fixCost);
+
+        int newLagerG = lagerG + aktionG;
+        int newLagerN = lagerN + aktionN;
 
         List<Double> besucherCosts = new ArrayList<Double>();
         pB.keySet().forEach(anzahlB -> {
-            int anzahlVerkaufG = (int) Math.min(lagerG, Math.round(pG * anzahlB));
-            int anzahlVerkaufN = (int) Math.min(lagerN, Math.round(pN * anzahlB));
+            // int anzahlVerkaufG = (int) Math.min(lagerG, Math.round(pG * anzahlB));
+            // int anzahlVerkaufN = (int) Math.min(lagerN, Math.round(pN * anzahlB));
+            int anzahlVerkaufG = (int) Math.min(newLagerG, Math.round(pG * anzahlB));
+            int anzahlVerkaufN = (int) Math.min(newLagerN, Math.round(pN * anzahlB));
 
             double variableCost = anzahlVerkaufG * GewinnCostG + anzahlVerkaufN * GewinnCostN;
-            double folgeCost = data.getCost(decision + 1, lagerG - anzahlVerkaufG, lagerN - anzahlVerkaufN);
+            System.out.println("AnzahlVerkaufG: " + anzahlVerkaufG + " * GewinnCostG: " + GewinnCostG + " + AnzahlVerkaufN: " + anzahlVerkaufN + " * GewinnCostN: " + GewinnCostN + " = VariableCost: " + variableCost);
+            double folgeCost = data.getCost(decision + 1, newLagerG - anzahlVerkaufG, newLagerN - anzahlVerkaufN);
+            if(folgeCost == Double.POSITIVE_INFINITY) {
+                System.out.println("FolgeCost: " + folgeCost + " Decision: " + decision + " NewLagerG - AnzahlVerkaufG: " + (newLagerG - anzahlVerkaufG) + " + NewLagerN - AnzahlVerkaufN: " + (newLagerN - anzahlVerkaufN) + " = 0");
+            }
 
             besucherCosts.add((fixCost + variableCost + folgeCost) * pB.get(anzahlB));
+            System.out.println("FixCost: " + fixCost + " + VariableCost: " + variableCost + " + FolgeCost: " + folgeCost + " * PB: " + pB.get(anzahlB) + " = BesucherCost: " + besucherCosts.get(besucherCosts.size() - 1));
+            System.out.println();
         });
 
-        return besucherCosts.stream().mapToDouble(d -> d).sum();
+        double expectedCost = besucherCosts.stream().mapToDouble(d -> d).sum();
+        System.out.println("ExpectedCost: " + expectedCost);
+        System.out.println("#################");
+
+        return expectedCost;
     }
 
     private static void calculateMinExpectedCosts(int decision, int lagerG, int lagerN, Map<Integer, Double> pB,
@@ -148,7 +173,13 @@ public class Main {
 
         for (int aktionG = 0; aktionG <= 4; aktionG++) {
             for (int aktionN = 0; aktionN <= 4 - aktionG; aktionN++) {
+                if(lagerG + aktionG > lagerMaxG || lagerN + aktionN > lagerMaxN) {
+                    continue;
+                }
+
                 double aktionCost = calculateAktionCost(decision, lagerG, lagerN, aktionG, aktionN, pB, pG, pN);
+
+                // System.out.println("Aktion: " + aktionG + " " + aktionN + " Cost: " + aktionCost);
 
                 if (aktionCost < minExpectedCost) {
                     minExpectedCost = aktionCost;
@@ -169,6 +200,8 @@ public class Main {
         for (int i = 0; i < aktionN; i++) {
             aktion += "N";
         }
+        if(aktionG == 0) aktion += "X";
+        if(aktionN == 0) aktion += "X";
         return aktion;
     }
 
