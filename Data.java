@@ -7,11 +7,11 @@ public class Data {
     public Data() {
         costs = new ArrayList<ArrayList<ArrayList<Double>>>();
         aktionen = new ArrayList<ArrayList<ArrayList<String>>>();
-        for (int i = 0; i < 241; i++) {
+        for (int i = 0; i <= 240; i++) {
             ArrayList<ArrayList<Double>> row = new ArrayList<ArrayList<Double>>();
-            for (int j = 0; j < 200; j++) {
+            for (int j = 0; j <= 200; j++) {
                 ArrayList<Double> col = new ArrayList<Double>();
-                for (int k = 0; k < 100; k++) {
+                for (int k = 0; k <= 100; k++) {
                     col.add(Double.POSITIVE_INFINITY);
                 }
                 row.add(col);
@@ -19,17 +19,17 @@ public class Data {
             costs.add(row);
         }
 
-        for (int i = 0; i < 200; i++) {
-            for(int j = 0; j < 100; j++) {
+        for (int i = 0; i <= 200; i++) {
+            for(int j = 0; j <= 100; j++) {
                 costs.get(240).get(i).set(j, 0.0);
             }
         }
 
-        for (int i = 0; i < 241; i++) {
+        for (int i = 0; i <= 240; i++) {
             ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
-            for (int j = 0; j < 200; j++) {
+            for (int j = 0; j <= 200; j++) {
                 ArrayList<String> col = new ArrayList<String>();
-                for (int k = 0; k < 100; k++) {
+                for (int k = 0; k <= 100; k++) {
                     col.add("");
                 }
                 row.add(col);
