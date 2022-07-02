@@ -105,6 +105,8 @@ public class MainDebug {
         data.print(1, 15);
         data.print(0, 15);
 
+        System.out.println("Decision: 0 + LagerG: 198 + LagerN: 97 " + data.getCost(0, 198, 97));
+
         System.out.println();
 
         
@@ -115,6 +117,16 @@ public class MainDebug {
         }
 
         System.out.println("\nMinimal cost and aktion for " + aktionenStateDecisionDebug + " " + aktionenStateLagerGDebug + " " + aktionenStateLagerNDebug + ": " + data.getCost(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug) + " " + data.getAktion(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug));
+
+        for(int i = 0; i < decisions; i++){
+            data.export(i, "./CSV/costs" + i + ".csv");
+        }
+        // data.export(239, "costs239.csv");
+        // data.export(238, "costs238.csv");
+        // data.export(200, "costs200.csv");
+        // data.export(100, "costs100.csv");
+        // data.export(50, "costs50.csv");
+        // data.export(0, "costs0.csv");
     }
 
     private static double calculateAktionCost(int decision, int lagerG, int newLagerG, int lagerN, int newLagerN, int aktionG, int aktionN, Map<Integer, Double> pB, double pG, double pN) {
