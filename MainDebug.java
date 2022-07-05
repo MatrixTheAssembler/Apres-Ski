@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 public class MainDebug {
     private static Data data = new Data();
 
-    private static final int lagerMaxG = 200;
-    private static final int lagerMaxN = 100;
-
-    private static final int decisions = 240;
+    private static final int decisions = 242;
 
     private static final int einheitG = 20;
     private static final int einheitN = 5;
+    
+    private static final int lagerMaxG = 10 * einheitG;
+    private static final int lagerMaxN = 20 * einheitN;
 
     private static final int hubschrauberMaxE = 4;
     private static final int hubschrauberCostFix = 50;
@@ -27,11 +27,11 @@ public class MainDebug {
     private static final int kaufCostGE = 20;
     private static final int kaufCostNE = 25;
 
-    private static final int GewinnCostG = -80 / einheitG;
-    private static final int GewinnCostN = -80 / einheitN;
+    private static final int gewinnCostG = -80 / einheitG;
+    private static final int gewinnCostN = -150 / einheitN;
 
-    private static Map<Integer, Double> pVormittagBesucher = new HashMap<>();
-    private static Map<Integer, Double> pNachmittagBesucher = new HashMap<>();
+    private static final Map<Integer, Double> pVormittagBesucher = new HashMap<>();
+    private static final Map<Integer, Double> pNachmittagBesucher = new HashMap<>();
 
     private static final double pVormittagG = 0.3;
     private static final double pVormittagN = 0.2;
@@ -47,6 +47,7 @@ public class MainDebug {
     private static int currentLagerGDebug = 0;
     private static int currentLagerNDebug = 0;
     private static Map<String, Double> aktionenStateDebug = new HashMap<>();
+
 
     public static void main(String[] args) {
         pVormittagBesucher.put(0, 0.1);
@@ -100,8 +101,8 @@ public class MainDebug {
 
         System.out.println();
 
-        data.print(239, 15);
-        data.print(238, 15);
+        data.print(241, 15);
+        data.print(240, 15);
         data.print(1, 15);
         data.print(0, 15);
 
@@ -109,41 +110,33 @@ public class MainDebug {
 
         System.out.println();
 
-        
         Map<String, Double> sortedAktionenStateDebug = aktionenStateDebug.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         for (String key : sortedAktionenStateDebug.keySet()) {
             System.out.println(key + ": " + sortedAktionenStateDebug.get(key));
         }
 
-        System.out.println("\nMinimal cost and aktion for " + aktionenStateDecisionDebug + " " + aktionenStateLagerGDebug + " " + aktionenStateLagerNDebug + ": " + data.getCost(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug) + " " + data.getAktion(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug));
+        System.out.println("\nMinimal cost and aktion for " + aktionenStateDecisionDebug + " " + aktionenStateLagerGDebug + " " + aktionenStateLagerNDebug + ": " + data.getCost(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug) + " "
+                + data.getAktion(aktionenStateDecisionDebug, aktionenStateLagerGDebug, aktionenStateLagerNDebug));
 
-        for(int i = 0; i < decisions; i++){
-            data.export(i, "./CSV/costs" + i + ".csv");
+        for (int i = 0; i <= decisions; i++) {
+            data.export(i, "./CSV/data" + i + ".csv");
         }
-        // data.export(239, "costs239.csv");
-        // data.export(238, "costs238.csv");
-        // data.export(200, "costs200.csv");
-        // data.export(100, "costs100.csv");
-        // data.export(50, "costs50.csv");
-        // data.export(0, "costs0.csv");
     }
 
     private static double calculateAktionCost(int decision, int lagerG, int newLagerG, int lagerN, int newLagerN, int aktionG, int aktionN, Map<Integer, Double> pB, double pG, double pN) {
-        if (aktionG == 0 && aktionN == 0) {
-            return 0;
-        }
-
         double einkaufCostSum = kaufCostGE * aktionG + kaufCostNE * aktionN;
         // System.out.println("KaufCostGE: " + kaufCostGE + " * AktionG: " + aktionG + " + KaufCostNE: " + kaufCostNE + " * AktionN: " + aktionN + " = EinkaufCostSum: " + einkaufCostSum);
 
         double transportCostSum = 0;
-        if (aktionG + aktionN <= seilbahnMaxE && isVormittag(decision)) {
-            transportCostSum = seilbahnCostFix + aktionG * seilbahnCostE + aktionN * seilbahnCostE;
-            // System.out.println("SeilbahnCostFix: " + seilbahnCostFix + " + AktionG: " + aktionG + " * SeilbahnCostE: " + seilbahnCostE + " + AktionN: " + aktionN + " * SeilbahnCostE: " + seilbahnCostE + " = TransportCostSum: " + transportCostSum);
-        } else {
-            transportCostSum = hubschrauberCostFix + aktionG * hubschrauberCostE + aktionN * hubschrauberCostE;
-            // System.out.println("HubschrauberCostFix: " + hubschrauberCostFix + " + AktionG: " + aktionG + " * HubschrauberCostE: " + hubschrauberCostE + " + AktionN: " + aktionN + " * HubschrauberCostE: " + hubschrauberCostE + " = TransportCostSum: " + transportCostSum);
+        if (aktionG != 0 || aktionN != 0) {
+            if (aktionG + aktionN <= seilbahnMaxE && isVormittag(decision)) {
+                transportCostSum = seilbahnCostFix + aktionG * seilbahnCostE + aktionN * seilbahnCostE;
+                // System.out.println("SeilbahnCostFix: " + seilbahnCostFix + " + AktionG: " + aktionG + " * SeilbahnCostE: " + seilbahnCostE + " + AktionN: " + aktionN + " * SeilbahnCostE: " + seilbahnCostE + " = TransportCostSum: " + transportCostSum);
+            } else {
+                transportCostSum = hubschrauberCostFix + aktionG * hubschrauberCostE + aktionN * hubschrauberCostE;
+                // System.out.println("HubschrauberCostFix: " + hubschrauberCostFix + " + AktionG: " + aktionG + " * HubschrauberCostE: " + hubschrauberCostE + " + AktionN: " + aktionN + " * HubschrauberCostE: " + hubschrauberCostE + " = TransportCostSum: " + transportCostSum);
+            }
         }
 
         double fixCost = einkaufCostSum + transportCostSum;
@@ -154,7 +147,7 @@ public class MainDebug {
             int anzahlVerkaufG = (int) Math.min(newLagerG, Math.round(pG * anzahlB));
             int anzahlVerkaufN = (int) Math.min(newLagerN, Math.round(pN * anzahlB));
 
-            double variableCost = anzahlVerkaufG * GewinnCostG + anzahlVerkaufN * GewinnCostN;
+            double variableCost = anzahlVerkaufG * gewinnCostG + anzahlVerkaufN * gewinnCostN;
             // System.out.println("AnzahlVerkaufG: " + anzahlVerkaufG + " * GewinnCostG: " + GewinnCostG + " + AnzahlVerkaufN: " + anzahlVerkaufN + " * GewinnCostN: " + GewinnCostN + " = VariableCost: " + variableCost);
             double folgeCost = data.getCost(decision + 1, newLagerG - anzahlVerkaufG, newLagerN - anzahlVerkaufN);
             if (folgeCost == Double.POSITIVE_INFINITY) {

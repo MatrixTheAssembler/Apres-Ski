@@ -1,13 +1,15 @@
 import java.util.ArrayList;
 
 public class Data {
+    private int decisions = 242;
+
     private ArrayList<ArrayList<ArrayList<Double>>> costs;
     private ArrayList<ArrayList<ArrayList<String>>> aktionen;
 
     public Data() {
         costs = new ArrayList<ArrayList<ArrayList<Double>>>();
         aktionen = new ArrayList<ArrayList<ArrayList<String>>>();
-        for (int i = 0; i <= 240; i++) {
+        for (int i = 0; i <= decisions; i++) {
             ArrayList<ArrayList<Double>> row = new ArrayList<ArrayList<Double>>();
             for (int j = 0; j <= 200; j++) {
                 ArrayList<Double> col = new ArrayList<Double>();
@@ -21,11 +23,11 @@ public class Data {
 
         for (int i = 0; i <= 200; i++) {
             for (int j = 0; j <= 100; j++) {
-                costs.get(240).get(i).set(j, 0.0);
+                costs.get(decisions).get(i).set(j, 0.0);
             }
         }
 
-        for (int i = 0; i <= 240; i++) {
+        for (int i = 0; i <= decisions; i++) {
             ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
             for (int j = 0; j <= 200; j++) {
                 ArrayList<String> col = new ArrayList<String>();
@@ -76,19 +78,22 @@ public class Data {
     }
 
     public void export(int decision, String filename) {
-        String csv = "";
+        System.out.println("Exporting decison: " + decision);
+        StringBuilder csv = new StringBuilder("");
         for (int g = 0; g <= 200; g++) {
             for (int n = 0; n <= 100; n++) {
-                csv += g + ";" + n + ";";
-                csv += aktionToNumber(decision, g, n);
-                csv += "\n";
+                csv.append(g + ";" + n + ";");
+                csv.append(aktionToNumber(decision, g, n) + ";");
+                csv.append(getAktion(decision, g, n) + ";");
+                csv.append(getCost(decision, g, n));
+                csv.append("\n");
             }
         }
-        csv = csv.substring(0, csv.length() - 1);
+        csv.deleteCharAt(csv.length() - 1);
 
         try {
             java.io.FileWriter writer = new java.io.FileWriter(filename);
-            writer.write(csv);
+            writer.write(csv.toString());
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,7 +106,6 @@ public class Data {
         int numberN = 0;
         int numberX = 0;
 
-        //iterate over aktion string and count g and n
         for(int i = 0; i < aktion.length(); i++){
             if(aktion.charAt(i) == 'G'){
                 numberG++;
@@ -117,7 +121,6 @@ public class Data {
             }
         }
 
-        // return ((numberG + (numberN * (-1))) > 0 ? (numberG + (numberN * (-1))) : 1) * (numberX > 0 ? 10 : 1);
         return numberG + (numberN * (-1)) + numberX;
     }
 }

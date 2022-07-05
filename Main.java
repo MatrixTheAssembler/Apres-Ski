@@ -5,14 +5,14 @@ import java.util.Map;
 
 public class Main {
     private static Data data = new Data();
-
-    private static final int lagerMaxG = 200;
-    private static final int lagerMaxN = 100;
-
-    private static final int decisions = 240;
+    
+    private static final int decisions = 242;
 
     private static final int einheitG = 20;
     private static final int einheitN = 5;
+    
+    private static final int lagerMaxG = 10 * einheitG;
+    private static final int lagerMaxN = 20 * einheitN;
 
     private static final int hubschrauberMaxE = 4;
     private static final int hubschrauberCostFix = 50;
@@ -25,11 +25,11 @@ public class Main {
     private static final int kaufCostGE = 20;
     private static final int kaufCostNE = 25;
 
-    private static final int GewinnCostG = -80 / einheitG;
-    private static final int GewinnCostN = -80 / einheitN;
+    private static final int gewinnCostG = -80 / einheitG;
+    private static final int gewinnCostN = -150 / einheitN;
 
-    private static Map<Integer, Double> pVormittagBesucher = new HashMap<>();
-    private static Map<Integer, Double> pNachmittagBesucher = new HashMap<>();
+    private static final Map<Integer, Double> pVormittagBesucher = new HashMap<>();
+    private static final Map<Integer, Double> pNachmittagBesucher = new HashMap<>();
 
     private static final double pVormittagG = 0.3;
     private static final double pVormittagN = 0.2;
@@ -37,7 +37,7 @@ public class Main {
     private static final double pNachmittagG = 0.7;
     private static final double pNachmittagN = 0.1;
 
-
+    
     public static void main(String[] args) {
         pVormittagBesucher.put(0, 0.1);
         pVormittagBesucher.put(25, 0.1);
@@ -79,17 +79,15 @@ public class Main {
     }
 
     private static double calculateAktionCost(int decision, int lagerG, int newLagerG, int lagerN, int newLagerN, int aktionG, int aktionN, Map<Integer, Double> pB, double pG, double pN) {
-        if (aktionG == 0 && aktionN == 0) {
-            return 0;
-        }
-
         double einkaufCostSum = kaufCostGE * aktionG + kaufCostNE * aktionN;
 
         double transportCostSum = 0;
-        if (aktionG + aktionN <= seilbahnMaxE && isVormittag(decision)) {
-            transportCostSum = seilbahnCostFix + aktionG * seilbahnCostE + aktionN * seilbahnCostE;
-        } else {
-            transportCostSum = hubschrauberCostFix + aktionG * hubschrauberCostE + aktionN * hubschrauberCostE;
+        if (aktionG != 0 || aktionN != 0) {
+            if (aktionG + aktionN <= seilbahnMaxE && isVormittag(decision)) {
+                transportCostSum = seilbahnCostFix + aktionG * seilbahnCostE + aktionN * seilbahnCostE;
+            } else {
+                transportCostSum = hubschrauberCostFix + aktionG * hubschrauberCostE + aktionN * hubschrauberCostE;
+            }
         }
 
         double fixCost = einkaufCostSum + transportCostSum;
@@ -99,7 +97,7 @@ public class Main {
             int anzahlVerkaufG = (int) Math.min(newLagerG, Math.round(pG * anzahlB));
             int anzahlVerkaufN = (int) Math.min(newLagerN, Math.round(pN * anzahlB));
 
-            double variableCost = anzahlVerkaufG * GewinnCostG + anzahlVerkaufN * GewinnCostN;
+            double variableCost = anzahlVerkaufG * gewinnCostG + anzahlVerkaufN * gewinnCostN;
             double folgeCost = data.getCost(decision + 1, newLagerG - anzahlVerkaufG, newLagerN - anzahlVerkaufN);
 
             besucherCosts.add((fixCost + variableCost + folgeCost) * pB.get(anzahlB));
