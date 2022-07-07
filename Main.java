@@ -78,6 +78,35 @@ public class Main {
         data.print(0, 15);
     }
 
+
+    private static void calculateMinExpectedCosts(int decision, int lagerG, int lagerN, Map<Integer, Double> pB, double pG, double pN) {
+        double minExpectedCost = Double.POSITIVE_INFINITY;
+        String minCostAktion = "";
+
+        for (int aktionG = 0; aktionG <= hubschrauberMaxE; aktionG++) {
+            for (int aktionN = 0; aktionN <= hubschrauberMaxE - aktionG; aktionN++) {
+
+                int newLagerG = lagerG + aktionG * einheitG;
+                int newLagerN = lagerN + aktionN * einheitN;
+
+                if (newLagerG > lagerMaxG || newLagerN > lagerMaxN) {
+                    continue;
+                }
+
+                double aktionCost = calculateAktionCost(decision, lagerG, newLagerG, lagerN, newLagerN, aktionG, aktionN, pB, pG, pN);
+
+                if (aktionCost < minExpectedCost) {
+                    minExpectedCost = aktionCost;
+                    minCostAktion = aktionToLetters(aktionG, aktionN);
+                }
+            }
+        }
+
+        data.setCost(decision, lagerG, lagerN, minExpectedCost);
+        data.setAktion(decision, lagerG, lagerN, minCostAktion);
+    }
+
+
     private static double calculateAktionCost(int decision, int lagerG, int newLagerG, int lagerN, int newLagerN, int aktionG, int aktionN, Map<Integer, Double> pB, double pG, double pN) {
         double einkaufCostSum = kaufCostGE * aktionG + kaufCostNE * aktionN;
 
@@ -108,33 +137,7 @@ public class Main {
         return expectedCost;
     }
 
-    private static void calculateMinExpectedCosts(int decision, int lagerG, int lagerN, Map<Integer, Double> pB, double pG, double pN) {
-        double minExpectedCost = Double.POSITIVE_INFINITY;
-        String minCostAktion = "";
-
-        for (int aktionG = 0; aktionG <= hubschrauberMaxE; aktionG++) {
-            for (int aktionN = 0; aktionN <= hubschrauberMaxE - aktionG; aktionN++) {
-
-                int newLagerG = lagerG + aktionG * einheitG;
-                int newLagerN = lagerN + aktionN * einheitN;
-
-                if (newLagerG > lagerMaxG || newLagerN > lagerMaxN) {
-                    continue;
-                }
-
-                double aktionCost = calculateAktionCost(decision, lagerG, newLagerG, lagerN, newLagerN, aktionG, aktionN, pB, pG, pN);
-
-                if (aktionCost < minExpectedCost) {
-                    minExpectedCost = aktionCost;
-                    minCostAktion = aktionToLetters(aktionG, aktionN);
-                }
-            }
-        }
-
-        data.setCost(decision, lagerG, lagerN, minExpectedCost);
-        data.setAktion(decision, lagerG, lagerN, minCostAktion);
-    }
-
+    
     private static String aktionToLetters(int aktionG, int aktionN) {
         String aktion = "";
         for (int i = 0; i < aktionG; i++) {
