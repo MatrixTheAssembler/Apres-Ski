@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MainDebug {
-    private static Data data = new Data();
-
     private static final int decisions = 242;
 
     private static final int einheitG = 20;
@@ -15,6 +13,8 @@ public class MainDebug {
     
     private static final int lagerMaxG = 10 * einheitG;
     private static final int lagerMaxN = 20 * einheitN;
+
+    private static final Data data = new Data(decisions, lagerMaxG, lagerMaxN);
 
     private static final int hubschrauberMaxE = 4;
     private static final int hubschrauberCostFix = 50;
@@ -157,7 +157,7 @@ public class MainDebug {
         data.setCost(decision, lagerG, lagerN, minExpectedCost);
         data.setAktion(decision, lagerG, lagerN, minCostAktion);
     }
-    
+
 
     private static double calculateAktionCost(int decision, int lagerG, int newLagerG, int lagerN, int newLagerN, int aktionG, int aktionN, Map<Integer, Double> pB, double pG, double pN) {
         double einkaufCostSum = kaufCostGE * aktionG + kaufCostNE * aktionN;

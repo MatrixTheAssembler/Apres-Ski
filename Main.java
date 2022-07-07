@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Main {
-    private static Data data = new Data();
-    
     private static final int decisions = 242;
 
     private static final int einheitG = 20;
@@ -13,6 +11,8 @@ public class Main {
     
     private static final int lagerMaxG = 10 * einheitG;
     private static final int lagerMaxN = 20 * einheitN;
+
+    private static final Data data = new Data(decisions, lagerMaxG, lagerMaxN);
 
     private static final int hubschrauberMaxE = 4;
     private static final int hubschrauberCostFix = 50;
@@ -137,7 +137,7 @@ public class Main {
         return expectedCost;
     }
 
-    
+
     private static String aktionToLetters(int aktionG, int aktionN) {
         String aktion = "";
         for (int i = 0; i < aktionG; i++) {

@@ -1,19 +1,27 @@
 import java.util.ArrayList;
 
 public class Data {
-    private int decisions = 242;
+    private int decisions;
+
+    private int lagerMaxG;
+    private int lagerMaxN;
 
     private ArrayList<ArrayList<ArrayList<Double>>> costs;
     private ArrayList<ArrayList<ArrayList<String>>> aktionen;
 
-    public Data() {
+    public Data(int decisions, int lagerMaxG, int lagerMaxN) {
+        this.decisions = decisions;
+        this.lagerMaxG = lagerMaxG;
+        this.lagerMaxN = lagerMaxN;
+
         costs = new ArrayList<ArrayList<ArrayList<Double>>>();
         aktionen = new ArrayList<ArrayList<ArrayList<String>>>();
-        for (int i = 0; i <= decisions; i++) {
+
+        for (int i = 0; i <= this.decisions; i++) {
             ArrayList<ArrayList<Double>> row = new ArrayList<ArrayList<Double>>();
-            for (int j = 0; j <= 200; j++) {
+            for (int j = 0; j <= lagerMaxG; j++) {
                 ArrayList<Double> col = new ArrayList<Double>();
-                for (int k = 0; k <= 100; k++) {
+                for (int k = 0; k <= lagerMaxN; k++) {
                     col.add(Double.POSITIVE_INFINITY);
                 }
                 row.add(col);
@@ -21,17 +29,17 @@ public class Data {
             costs.add(row);
         }
 
-        for (int i = 0; i <= 200; i++) {
-            for (int j = 0; j <= 100; j++) {
-                costs.get(decisions).get(i).set(j, 0.0);
+        for (int i = 0; i <= lagerMaxG; i++) {
+            for (int j = 0; j <= lagerMaxN; j++) {
+                costs.get(this.decisions).get(i).set(j, 0.0);
             }
         }
 
-        for (int i = 0; i <= decisions; i++) {
+        for (int i = 0; i <= this.decisions; i++) {
             ArrayList<ArrayList<String>> row = new ArrayList<ArrayList<String>>();
-            for (int j = 0; j <= 200; j++) {
+            for (int j = 0; j <= lagerMaxG; j++) {
                 ArrayList<String> col = new ArrayList<String>();
-                for (int k = 0; k <= 100; k++) {
+                for (int k = 0; k <= lagerMaxN; k++) {
                     col.add("");
                 }
                 row.add(col);
@@ -80,8 +88,8 @@ public class Data {
     public void export(int decision, String filename) {
         System.out.println("Exporting decison: " + decision);
         StringBuilder csv = new StringBuilder("");
-        for (int g = 0; g <= 200; g++) {
-            for (int n = 0; n <= 100; n++) {
+        for (int g = 0; g <= lagerMaxG; g++) {
+            for (int n = 0; n <= lagerMaxN; n++) {
                 csv.append(g + ";" + n + ";");
                 csv.append(aktionToNumber(decision, g, n) + ";");
                 csv.append(getAktion(decision, g, n) + ";");
