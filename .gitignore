@@ -132,3 +132,4 @@ dmypy.json
 *.class
 .vscode
 .Rhistory
+.RData

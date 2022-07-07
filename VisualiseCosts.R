@@ -17,7 +17,8 @@ ggplot2::ggplot(aktion, mapping=ggplot2::aes(x=G,
   ggplot2::scale_fill_manual(values = colours,
                              breaks = c(-4, -2, 0, 2, 4, 7, 9, 11, 13, 18, 20, 22, 29, 31, 40),
                              labels = c("NNNN", "GNNN", "GGNN", "GGGN", "GGGG", "NNNX", "GNNX", "GGNX", "GGGX", "NNXX", "GNXX", "GGXX", "NXXX", "GXXX", "XXXX"),
-                             guide = "legend")
+                             guide = "legend",
+                             name = NULL)
 
 
 
@@ -38,7 +39,8 @@ for(i in 0:241){
     ggplot2::scale_fill_manual(values = colours,
                                breaks = c(-4, -2, 0, 2, 4, 7, 9, 11, 13, 18, 20, 22, 29, 31, 40),
                                labels = c("NNNN", "GNNN", "GGNN", "GGGN", "GGGG", "NNNX", "GNNX", "GGNX", "GGGX", "NNXX", "GNXX", "GGXX", "NXXX", "GXXX", "XXXX"),
-                               guide = "legend")
+                               guide = "legend",
+                               name = NULL)
   jpeg(paste("./Bilder/Aktion/aktion", i, ".jpg", sep = ""), width = 1000, height = 500)
   print(aktionMap)
   dev.off()
